@@ -28,6 +28,9 @@ what I will describe below.
 
 ## What could go wrong? 
 
+In theory, the data was supposed to be counter readings at four hour intervals,
+but in practice there were some messy rows.
+
 - Data could be over- or under- collected. 
 
   The data included instances where multiple observations were just minutes apart, and other cases where there were one or more missed observations in a sequence leading to intervals that were more than 4 hours apart, up to 24 hours.
@@ -49,10 +52,10 @@ entire 2.3 million rows, rather than taking it one piece at a time.
 
 Why did working on the "forest" rather than the "trees" work so well?
 
-- With a single station's worth of data, it is harder to know whether 
+- With a single station's worth of data, it's harder to recognize whether 
 an observation is a problematic outlier or just on the high or 
 low end of normal. 
-With more observations, it's just much easier to be confident when you 
+With more observations, it's much easier to be confident when you 
 decide an outlier does not belong in the dataset.
 
 - I knew theoretically that real-world datasets often
@@ -74,7 +77,11 @@ a KDE plot of the uncleaned 2.3 million rows:
 
 ![needs_cleaning]({{ site.url }}/images/dirty_time_delta.svg)
 
-What do you need to do with this? Just figure out where that little bump 
+You can read this as - a cluster of small outliers on the left, a whole 
+lotta nothing, then a chunk of data where it's "supposed to be" at
+four hour intervals on the right. 
+
+What do you need to do with this? Just figure out where that bump 
 on the left is! You 
 don't need to know which stations or which months this happened or why
 it might have happened. You just need to find it and get rid of it. 
@@ -92,7 +99,8 @@ I cut those off.  Note: I discovered as I was making a graph for this blog
 post that I didn't actually cut off enough, as there was another spike after 
 that guy. I should have just chopped the data in the middle of that "whole
 lot of nothing" range. I guess I was squeamish about chopping off too
-much data, but 1700 rows out of 2+ million is noise.
+much data, but 1700 rows out of 2+ million really doesn't make a difference
+in your final statistics.
 
 On the other end, The data with large time intervals wasn't just dropped. The passenger 
 entry and exits counts were flagged as nulls because they weren't 
@@ -129,7 +137,7 @@ per person to get through the doorway.
 
 ![qu_2]({{ site.url }}/images/qu_2.png)
 
-Nope. Definitely found the boundary between good and bad data here.
+Nope! Definitely found the boundary between good and bad data here.
 
 We added a (possibly too?) generous 50% margin to that ~3000 value and 
 cut off every counter reporting more than 4500 observations. 
@@ -157,8 +165,8 @@ Poisson.
 ![mondays]({{ site.url }}/images/mondays.svg)
 
 
-OK, proof that I'm a nerd, but: It was my big accomplishment for the 
+OK, proof that I'm a nerd, but that was my big accomplishment for the 
 first week of boot camp.
 
-I just had to get out from under the trees and look at the forest.
+I learned to get out from under the trees and look at the forest.
 
