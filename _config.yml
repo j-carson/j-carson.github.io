@@ -27,7 +27,7 @@ github:
   repo:              https://github.com/j-carson
 
 # Gems
-gems:
+plugins:
   - jekyll-paginate
   - jekyll-gist
 
