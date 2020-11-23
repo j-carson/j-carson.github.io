@@ -3,8 +3,7 @@ detecting network intrusions.
 
 By the end of the bootcamp, I was starting to get good at 
 designing a presentation PowerPoint... or at least at letting the 
-auto-design feature of PowerPoint design a presentation for me.  
-My intruder looks 
+auto-design feature of PowerPoint design a presentation for me. My intruder looks 
 too well-dressed, though. Maybe he's an FBI agent trying to catch the 
 hacker?  
 
@@ -19,7 +18,7 @@ too many stories to choose from.
 
 ![slide2]({{ site.url }}/images/project5/Slide2.png)
 
-And explained vaguely what network logs were and where my data 
+And explained generally what network logs were and where my data 
 came from.
 
 ![slide3]({{ site.url }}/images/project5/Slide3.png)
@@ -42,7 +41,7 @@ Every classification report needs a [ROC curve](https://scikit-learn.org/stable/
 
 The advisors recommended **not** doing the confusion matrix
 because it is overwhelming with so many labels, but I didn't
-really know a better way to summarize my results graphically.
+really find a better way to summarize my results graphically.
 So, I broke the matrix down over a few slides. 
 
 ![slide7]({{ site.url }}/images/project5/Slide7.png)
@@ -56,14 +55,14 @@ percentage wise, but if you think about the number of packets
 flying across the internet everyday, this would be a lot of false alarms!
 
 ![slide9]({{ site.url }}/images/project5/Slide9.png)
+
 The attacks were mostly labeled as some kind of attack, but 
 only 87% of the attacks got the correct label. 
 
 ![slide10]({{ site.url }}/images/project5/Slide10.png)
 
 Cluster maps are cool! But, again for a general audience, I needed
-to explain them more conceptually than with lots of detail.
-Again, I did it over several slides...
+to explain them more conceptually, so I did it over several slides...
 
 ![slide11]({{ site.url }}/images/project5/Slide11.png)
 ![slide12]({{ site.url }}/images/project5/Slide12.png)
@@ -71,11 +70,11 @@ Again, I did it over several slides...
 
 Each feature was colored by skew. Some features had strong positive
 or negative skew only for certain labels. That made it easier 
-for a machine learning algorithm to label them correctly.
+for a machine learning algorithm to classify them correctly.
 
 ![slide14]({{ site.url }}/images/project5/Slide14.png)
 
-But there are  also labels where the colors are all "blah." 
+But there are also labels where the colors are all "blah." 
 If there are only subtle differences in 
 the distributions of the feature values between one row and
 another, it's going to be harder for a program to get the labels correct. 
@@ -83,9 +82,9 @@ another, it's going to be harder for a program to get the labels correct.
 ![slide15]({{ site.url }}/images/project5/Slide15.png)
 
 The last slide I briefly mentioned over-fitting. It is likely
-my model over-fitted on just a few features on these 
-last rows, because the dataset had only a few training examples
-for these last few labels only a few featurs were distinctive.
+my model over-fitted on just on these 
+last labels, because the dataset had only a few training examples
+for these last categories and only a few features are distinctive.
 
 ![slide16]({{ site.url }}/images/project5/Slide16.png)
 ![slide17]({{ site.url }}/images/project5/Slide17.png)
