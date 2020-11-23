@@ -2,8 +2,8 @@
 permalink:           pretty
 
 # Setup
-title:               To Be Determined
-tagline:             A Data Science Student Blog
+title:               from data import insight
+tagline:
 url:                 http://j-carson.github.io
 paginate:            2
 baseurl:             ""
@@ -17,7 +17,7 @@ sass:
 
 # About/contact
 author:
-  name:              Janet
+  name:              Janet Carson
   url:               http://j-carson.github.io
   email:             
 

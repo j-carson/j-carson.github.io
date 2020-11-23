@@ -3,21 +3,26 @@ layout: page
 title: About
 ---
 
+Hello world! 
 
-Hello world! This is a student blog for 
-[Metis Data Science Bootcamp](https://www.thisismetis.com/data-science-bootcamps).
+I'm your hostess, 
+[Janet Carson.](https://www.linkedin.com/in/carsondata)
+I have a B.A. in Mathematical Sciences from 
+[Rice University](https://www.rice.edu) and an M.S. in Computer Science from the [University of Washington](https://www.washington.edu). I worked as a 
+lower-level software developer back in the Dark Ages, but left the 
+workforce for an extended period of time to raise a family. 
 
+I retrained at 
+[Metis Data Science Bootcamp](https://www.thisismetis.com/data-science-bootcamps) (go Seattle Winter 2019 cohort!)
+to get some current technical skills (the world
+changed, but my fingers never forgot ```vi```!) and now work
+as a Data Engineer at [Echodyne](https://www.echodyne.com), processing and
+analyzing data from radar field tests.
 
-When the instructors had the class set up our blog templates, I didn't have
-a title in mind, so I just put "To Be Determined." I'll try to
-come up with a clever name eventually, but I think this will do for now. 
-
-Like anyone going through a career change, there's a chunk of my future that
-is __To Be Determined__.
-
-And I am __determined__ to finish the bootcamp and learn a lot 
-about data science. Go Seattle Winter 2019 cohort! 
-
-I'm your hostess, Janet Carson. I have a B.A. in Mathematical Sciences from [Rice University](https://www.rice.edu) and an M.S. in Computer Science from the [University of Washington](https://www.washington.edu), but I have been out of the workforce for the last 20 years. Strangely, my fingers never forgot ```vi```. 
+This started as my student blog for Metis, but now that I'm back working, it's been hard to keep it updated.
+Data science bootcamps are a a great way to
+get started, but you definitely can't learn everything in 12 weeks. I've picked up
+a lot of new skills in the last year, but I haven't been blogging about
+them. I'm going to try to get back here again, for my own benefit.
 
 Welcome, and thanks for reading!
