@@ -1,3 +1,9 @@
+---
+layout: post
+title: Metis Final Project
+---
+
+
 For my final project at Metis, I worked on a dataset for
 detecting network intrusions.
 

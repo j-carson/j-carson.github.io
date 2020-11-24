@@ -1,3 +1,8 @@
+---
+layout: post
+title: Post Bootcamp Perspective
+---
+
 It's been a while since I started this blog as part of my data 
 science bootcamp. Looking back at my little blog, it seemed 
 like I should either take it down or start using it again. 
