@@ -2,6 +2,7 @@
 layout: post
 title: Selecting lines in a Bokeh plot
 bokeh: true
+category: python,bokeh
 ---
 
 So, I haven't actually wanted to be a web developer, but 
@@ -25,6 +26,7 @@ the yellow line on the left, the yellow line on the right
 also selects.
 The reset tool in the upper left will put the colors back.
 
+{% include bokeh_2.3.3_includes.html %}
 {% include 2020_11_23_two_plot/two_plots_div.html  %}
 {% include 2020_11_23_two_plot/two_plots_script.html  %}
 
@@ -37,27 +39,24 @@ boundaries and marks the lines associated with those points as selected.
 
 
 ```python
-import random
-import pandas as pd
-import numpy as np
-
 from bokeh.plotting import figure
 from bokeh.models import CustomJS, ColumnDataSource
 from bokeh.events import SelectionGeometry, Reset
 from bokeh.layouts import column, gridplot
 from bokeh.models.widgets import Button
+from palettable.cartocolors.qualitative import Bold_8
 from bokeh.embed import components
 
-from palettable.cartocolors.qualitative import Bold_8
+import pandas as pd
+import numpy as np
 
-# the lines wiggle randomly in y and z, but
-# go from left to right in x
-def make_line(line_id):
-    line_size = random.choice(range(5,15))
+# Let's try to do this more like a track set would look
+def make_track(track_id):
+    track_size = random.choice(range(5,15))
     start_time = random.choice(range(10))
-    xs = list(range(start_time,start_time + line_size))
-    ys = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
-    zs = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
+    xs = list(range(start_time,start_time + track_size))
+    ys = np.random.sample((track_size)) * random.choice(range(1,3)) + random.choice(range(3))
+    zs = np.random.sample((track_size)) * random.choice(range(1,3)) + random.choice(range(3))
     
     df = pd.DataFrame(
         dict(
@@ -66,26 +65,27 @@ def make_line(line_id):
             z=zs,
         )
     )
-    df['line_id'] = line_id
+    df['track_id'] = track_id
     return df
     
-line_df = pd.concat(
+track_df = pd.concat(
     [
-        make_line(i) for i in range(8)
+        make_track(i) for i in range(8)
     ],
     ignore_index = True
 ).sort_values('x').reset_index(drop=True)
 
-line_group = line_df.groupby('line_id')
-def per_line_data(group, column):
+
+track_group = track_df.groupby('track_id')
+def per_track_data(group, column):
     return [group[column].get_group(i) for i in group.indices]
     
 column_data = dict(
-    xs=per_line_data(line_group, 'x'),
-    ys=per_line_data(line_group, 'y'),
-    zs=per_line_data(line_group, 'z'),
+    xs=per_track_data(track_group, 'x'),
+    ys=per_track_data(track_group, 'y'),
+    zs=per_track_data(track_group, 'z'),
     colors=Bold_8.hex_colors, 
-    line_id=list(line_group.indices.keys())
+    track_id=list(track_group.indices.keys())
 )
 
 s1 = ColumnDataSource(column_data)
@@ -102,7 +102,7 @@ xy_plot.yaxis.axis_label = "The variable Y"
 
 xz_plot = figure(title="XZ view", **common_plot_args)
 xz_plot.xaxis.axis_label = "The mysterious X"
-xz_plot.yaxis.axis_label = "The inconstant Z"
+xz_plot.yaxis.axis_label = "The parameter Z"
 
 common_multiline_args = dict(
     source=s1, 
@@ -135,25 +135,25 @@ var new_selection = []
 
 // for each line
 for (var j=0;j<xs.length;j+=1) {
-
+    
     // grab the points in line j
     const xj = xs[j]
     const yj = ys[j]
     
     // if one point in the line is in the selection
     // box select that line
+    
     for (var jj=0;jj<xj.length;jj+=1) {
         const xjj = xj[jj]
         const yjj = yj[jj]
     
         if ((xjj >= x0) && (xjj <= x1) && (yjj >= y0) && (yjj <= y1)) {
-            // once we match one point, done checking this line
             new_selection.push(j)
             break 
         }
+        
+        // lines are in sorted-by-x order, no need to search past end of the box
         else if (xjj > x1) {
-            // lines are in sorted-by-x order, once past end of box
-            // done checking this line
             break
         }
     }
@@ -164,7 +164,6 @@ s1.selected['indices'] = new_selection
 s1.change.emit()
 """
 
-# the code for each callback is the same except for the column names of the data
 xy_select_callback =  CustomJS(args=dict(s1=s1,xy_names=['xs','ys']), code=select_code)
 xy_plot.js_on_event(SelectionGeometry, xy_select_callback)
 
@@ -190,10 +189,12 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
 // lines from whatever they are to 'cyan'
 // args = s1 = column data source
     const selection = s1.selected['indices']
+    
     if (selection.length == 0) {
-        alert("no line selected")
-        return
+        alert("No line selected")
+    
     }
+    
     for (var j = 0; j < selection.length; j+= 1) {
         s1.data['colors'][selection[j]] = 'cyan'
     }
@@ -201,27 +202,27 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
     s1.change.emit()
 """))
 
-bothplots = gridplot([[xy_plot, xz_plot]])
-plot_with_button = column(bothplots, b)
+bothviews = gridplot([[xy_plot, xz_plot]], sizing_mode='stretch_both')
+plot_with_button = column(bothviews, b)
 
 script, div = components(plot_with_button)
-
-# My blog wanted to make the plot really small, so I wrapped
-# Bokeh's div in a bigger one to grab more space
-wrap_div = f'<div style="height: 500px; width: 900px;"> {div} </div>'
+# My blog was really messing up the size of the plot, so I wrapped it in a div
+# of reasonable size
+wrap_div = f'<div id="plot_wrapper" style="width: 100%; height: 425px;"> {div} </div>'
 
 with open ("two_plots_script.html",'w') as fp:
     fp.write(script)
+
 with open("two_plots_div.html",'w') as fp:
     fp.write(wrap_div)
 ```
 
 
 The last trick was to get the plot on my blog so I could show it off.
-Turns out, it's not so bad: You just copy the magic incantations from
+Turns out, it's not so bad: You just copy the magic incantations below from
 the [Bokeh documentation](https://docs.bokeh.org/en/latest/docs/user_guide/embed.html#userguide-embed-standalone)
-into the template, then include your div and script in the code for the post.
-Easy peasy.
+into the post before you include your div and script in the code for the post.
+Easy peasy. (Substitude x.y.z for whatever version of Bokeh you built with.)
 
 ```html
 <script src="https://cdn.bokeh.org/bokeh/release/bokeh-x.y.z.min.js"

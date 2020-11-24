@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Look at the forest!
+category: metis-project
 ---
 
 ![trees]({{ site.url }}/images/trees.jpg)

@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Looking for Butterflies
+category: metis-project
 ---
 
 ![butterfly](https://2.bp.blogspot.com/-RN7TkDkRpRs/T5uC_UIcPCI/AAAAAAAAPcA/EIr7OAZ9aKM/s1600/schmetterling-256.png)

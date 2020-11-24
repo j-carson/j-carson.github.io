@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Metis Final Project
+category: metis-project
 ---
 
 
