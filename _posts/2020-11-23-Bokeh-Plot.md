@@ -16,47 +16,47 @@ did a web-training
 that I attended to get going again.
 
 This is a mockup of a plot I need for my work website, where
-we want to be able to select lines from a plot.
-
-
+we want to be able to select lines from a plot. 
 You can use the box select tool in the upper left to select lines, then 
 click the button on the bottom to change the line color to cyan.
-The two sides of the plot are linked, so if you box-select
+The two sides of the plot are linked (which is the feature I wanted 
+to play with), so if you box-select
 the yellow line on the left, the yellow line on the right
 also selects.
 The reset tool in the upper left will put the colors back.
 
-{% include bokeh_2.3.3_includes.html %}
-{% include 2020_11_23_two_plot/two_plots_div.html  %}
-{% include 2020_11_23_two_plot/two_plots_script.html  %}
+<div style="width: 100%; height: 450px; resize:both; overflow:auto">
+{% include 2020_11_23/two_plots.html  %}
+</div>
 
-In order to use the built-in selection color functionality,
-I've bunched all my lines into a single MultiLine glyph.
-Getting the data into the right format takes up a bunch of the code
+In order to use the selection styling functionality built into Bokeh,
+I've bunched all my lines in each plot into a single MultiLine glyph.
+Getting the data into the right format takes up a most of the code
 below.
-Then, the box select callback finds the points in the box
-boundaries and marks the lines associated with those points as selected.
 
 
 ```python
+mport random
+
 from bokeh.plotting import figure
 from bokeh.models import CustomJS, ColumnDataSource
 from bokeh.events import SelectionGeometry, Reset
 from bokeh.layouts import column, gridplot
 from bokeh.models.widgets import Button
+from bokeh.embed import autoload_static
+from bokeh.resources import CDN
+
 from palettable.cartocolors.qualitative import Bold_8
-from bokeh.embed import components
-
-import pandas as pd
 import numpy as np
+import pandas as pd
 
-# Let's try to do this more like a track set would look
-def make_track(track_id):
-    track_size = random.choice(range(5,15))
-    start_time = random.choice(range(10))
-    xs = list(range(start_time,start_time + track_size))
-    ys = np.random.sample((track_size)) * random.choice(range(1,3)) + random.choice(range(3))
-    zs = np.random.sample((track_size)) * random.choice(range(1,3)) + random.choice(range(3))
+# generate a bunch of lines in "long" format
+def make_line(line_id):
+    line_size = random.choice(range(5,15))
+    line_start = random.choice(range(10))
+    xs = list(range(line_start, line_start + line_size))
+    ys = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
+    zs = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
     
     df = pd.DataFrame(
         dict(
@@ -65,31 +65,37 @@ def make_track(track_id):
             z=zs,
         )
     )
-    df['track_id'] = track_id
+    df['line_id'] = line_id
     return df
     
-track_df = pd.concat(
+line_df = pd.concat(
     [
-        make_track(i) for i in range(8)
+        make_line(i) for i in range(8)
     ],
     ignore_index = True
 ).sort_values('x').reset_index(drop=True)
 
-
-track_group = track_df.groupby('track_id')
-def per_track_data(group, column):
+# pack the lines into a format that bokeh MultiLine glyph expects
+line_group = line_df.groupby('line_id')
+def per_line_data(group, column):
     return [group[column].get_group(i) for i in group.indices]
     
 column_data = dict(
-    xs=per_track_data(track_group, 'x'),
-    ys=per_track_data(track_group, 'y'),
-    zs=per_track_data(track_group, 'z'),
+    xs=per_line_data(line_group, 'x'),
+    ys=per_line_data(line_group, 'y'),
+    zs=per_line_data(line_group, 'z'),
     colors=Bold_8.hex_colors, 
-    track_id=list(track_group.indices.keys())
+    line_id=list(line_group.indices.keys())
 )
 
 s1 = ColumnDataSource(column_data)
+```
 
+Now that I have my data, let's plot.
+Since I want my plots to be linked, I use the same ColumnDataSource for both the 
+left and right sides.  The two plots also have the same x-axis.
+
+```python
 common_plot_args = dict(
     plot_width=400, 
     plot_height=400, 
@@ -108,6 +114,7 @@ common_multiline_args = dict(
     source=s1, 
     line_color="colors", 
     line_width=3,
+    # This is the cool selection styling :-)
     selection_color="black",
     selection_line_width=3,
     nonselection_alpha=.8,
@@ -116,6 +123,13 @@ common_multiline_args = dict(
 
 xy_plot.multi_line(xs="xs", ys="ys", **common_multiline_args)
 xz_plot.multi_line(xs="xs", ys="zs", **common_multiline_args)
+
+```
+
+The box select callback finds the data points in the box
+boundaries and marks those lines associated with those points as selected.
+
+```python
 
 select_code ="""
 // box selet callback for both plots
@@ -169,7 +183,13 @@ xy_plot.js_on_event(SelectionGeometry, xy_select_callback)
 
 xz_select_callback =  CustomJS(args=dict(s1=s1,xy_names=['xs','zs']), code=select_code)
 xz_plot.js_on_event(SelectionGeometry, xz_select_callback)
+```
 
+These last two callbacks
+-  Reset the plot to it's original state
+-  Change the color of the selected plots when you press the button below the plots
+
+```python
 reset_callback = CustomJS(args=dict(s1=s1), 
 code=f"""
 // reset callback restores original colors and 
@@ -202,33 +222,35 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
     s1.change.emit()
 """))
 
-bothviews = gridplot([[xy_plot, xz_plot]], sizing_mode='stretch_both')
+```
+The last trick was to get the plot on my blog so I could show it off.
+Bokeh's autoload_static method creates two outputs: the body of a script to 
+display your plot, and a `<script>` tag that loads the script. In order
+for the script to load properly, you have to give autoload_static the 
+location where you are going to store your script so that the html tag
+part knows what to put for `src=`.
+
+
+```python
+bothviews = gridplot([[xy_plot, xz_plot]], sizing_mode='scale_both')
 plot_with_button = column(bothviews, b)
 
-script, div = components(plot_with_button)
-# My blog was really messing up the size of the plot, so I wrapped it in a div
-# of reasonable size
-wrap_div = f'<div id="plot_wrapper" style="width: 100%; height: 425px;"> {div} </div>'
+script_body, html_tag = autoload_static(plot_with_button, CDN, "/scripts/2020_11_23/two_plots.js")
 
-with open ("two_plots_script.html",'w') as fp:
-    fp.write(script)
+with open ("two_plots.html",'w') as fp:
+    fp.write(html_tag)
 
-with open("two_plots_div.html",'w') as fp:
-    fp.write(wrap_div)
+with open("two_plots.js",'w') as fp:
+    fp.write(script_body)
+
 ```
 
+When I incorporated the script tag into the blog (jinja code), I wrapped the html part
+in a div to set the size. This blog is in jekyll, so I put the html tag in the _includes/
+directory and the code body in scripts/.
 
-The last trick was to get the plot on my blog so I could show it off.
-Turns out, it's not so bad: You just copy the magic incantations below from
-the [Bokeh documentation](https://docs.bokeh.org/en/latest/docs/user_guide/embed.html#userguide-embed-standalone)
-into the post before you include your div and script in the code for the post.
-Easy peasy. (Substitude x.y.z for whatever version of Bokeh you built with.)
-
-```html
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-x.y.z.min.js"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-x.y.z.min.js"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-x.y.z.min.js"
-        crossorigin="anonymous"></script>
+```markdown
+<div style="width: 100%; height: 450px; resize:both; overflow:auto">
+{% include 2020_11_23/two_plots.html  %}
+</div>
 ```
