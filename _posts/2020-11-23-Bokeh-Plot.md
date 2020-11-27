@@ -241,10 +241,13 @@ with open("two_plots.js",'w') as fp:
 
 When I incorporated the script tag into the blog (jinja code), I wrapped the html part
 in a div to set the size. This blog is in jekyll, so I put the html tag in the _includes/
-directory and the code body in scripts/.
+directory (where jekyll looks when I use the include directive) and the code body in 
+scripts/ where I told bokeh it would be when I created the html.
 
 ```markdown
 <div style="width: 100%; height: 450px; resize:both; overflow:auto">
+{% raw %}
 {% include 2020_11_23/two_plots.html  %}
+{% endraw %}
 </div>
 ```
