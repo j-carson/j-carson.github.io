@@ -34,9 +34,8 @@ I've bunched all my lines in each plot into a single MultiLine glyph.
 Getting the data into the right format takes up a most of the code
 below.
 
-
 ```python
-mport random
+import random
 
 from bokeh.plotting import figure
 from bokeh.models import CustomJS, ColumnDataSource
@@ -123,14 +122,12 @@ common_multiline_args = dict(
 
 xy_plot.multi_line(xs="xs", ys="ys", **common_multiline_args)
 xz_plot.multi_line(xs="xs", ys="zs", **common_multiline_args)
-
 ```
 
 The box select callback finds the data points in the box
 boundaries and marks those lines associated with those points as selected.
 
 ```python
-
 select_code ="""
 // box selet callback for both plots
 // args:
@@ -209,19 +206,17 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
 // lines from whatever they are to 'cyan'
 // args = s1 = column data source
     const selection = s1.selected['indices']
-    
+
     if (selection.length == 0) {
         alert("No line selected")
     
     }
-    
     for (var j = 0; j < selection.length; j+= 1) {
         s1.data['colors'][selection[j]] = 'cyan'
     }
     s1.selected['indices'] = []
     s1.change.emit()
 """))
-
 ```
 The last trick was to get the plot on my blog so I could show it off.
 Bokeh's autoload_static method creates two outputs: the body of a script to 
@@ -242,7 +237,6 @@ with open ("two_plots.html",'w') as fp:
 
 with open("two_plots.js",'w') as fp:
     fp.write(script_body)
-
 ```
 
 When I incorporated the script tag into the blog (jinja code), I wrapped the html part
