@@ -1,7 +1,6 @@
 ---
 layout: post
 title: Looking for Butterflies
-category: metis-project
 ---
 
 ![butterfly](https://2.bp.blogspot.com/-RN7TkDkRpRs/T5uC_UIcPCI/AAAAAAAAPcA/EIr7OAZ9aKM/s1600/schmetterling-256.png)
@@ -34,7 +33,7 @@ an [article I saw](https://www.texastribune.org/2019/02/14/government-shutdown-d
 National Butterfly Reserve from being destroyed by a border wall.
 
 
-![billtext]({{ site.url }}/images/butterfly_text.png)
+![billtext]({{ site.url }}/assets/images/butterfly_text.png)
 
 From the perspective of someone studying natural language processing, I wondered 
 > - __How often does a word like 'butterfly' appear in the Federal budget?__ 
@@ -95,7 +94,7 @@ Doing some traditional cluster analysis also uncovered a bit of a problem
 with my project proposal: If most of the words in the budget classify 
 as 'rare words,' what exactly was I going to look for again?
 
-![budget words]({{ site.url }}/images/budget_words.png)
+![budget words]({{ site.url }}/assets/images/budget_words.png)
 
 While I had a general idea that I wanted the 'weird' budget entries,
 I didn't have an idea of what that might mean mathematically. The 

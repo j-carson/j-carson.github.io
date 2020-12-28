@@ -1,8 +1,6 @@
 ---
 layout: post
 title: Selecting lines in a Bokeh plot
-bokeh: true
-category: python,bokeh
 ---
 
 So, I haven't actually wanted to be a web developer, but 
@@ -34,7 +32,7 @@ I've bunched all my lines in each plot into a single MultiLine glyph.
 Getting the data into the right format takes up a most of the code
 below.
 
-```python
+{% highlight python %}
 import random
 
 from bokeh.plotting import figure
@@ -54,8 +52,10 @@ def make_line(line_id):
     line_size = random.choice(range(5,15))
     line_start = random.choice(range(10))
     xs = list(range(line_start, line_start + line_size))
-    ys = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
-    zs = np.random.sample((line_size)) * random.choice(range(1,3)) + random.choice(range(3))
+    ys = np.random.sample((line_size)) * random.choice(range(1,3)) \
+                + random.choice(range(3))
+    zs = np.random.sample((line_size)) * random.choice(range(1,3)) \
+                + random.choice(range(3))
     
     df = pd.DataFrame(
         dict(
@@ -88,13 +88,13 @@ column_data = dict(
 )
 
 s1 = ColumnDataSource(column_data)
-```
+{% endhighlight %}
 
 Now that I have my data, let's plot.
 Since I want my plots to be linked, I use the same ColumnDataSource for both the 
 left and right sides.  The two plots also have the same x-axis.
 
-```python
+{% highlight python %}
 common_plot_args = dict(
     plot_width=400, 
     plot_height=400, 
@@ -122,12 +122,12 @@ common_multiline_args = dict(
 
 xy_plot.multi_line(xs="xs", ys="ys", **common_multiline_args)
 xz_plot.multi_line(xs="xs", ys="zs", **common_multiline_args)
-```
+{% endhighlight %}
 
 The box select callback finds the data points in the box
 boundaries and marks those lines associated with those points as selected.
 
-```python
+{% highlight python %}
 select_code ="""
 // box selet callback for both plots
 // args:
@@ -163,7 +163,8 @@ for (var j=0;j<xs.length;j+=1) {
             break 
         }
         
-        // lines are in sorted-by-x order, no need to search past end of the box
+        // lines are in sorted-by-x order, 
+        // no need to search past end of the box
         else if (xjj > x1) {
             break
         }
@@ -175,18 +176,22 @@ s1.selected['indices'] = new_selection
 s1.change.emit()
 """
 
-xy_select_callback =  CustomJS(args=dict(s1=s1,xy_names=['xs','ys']), code=select_code)
+xy_select_callback =  CustomJS(
+                        args=dict(s1=s1, xy_names=['xs','ys']), 
+                        code=select_code)
 xy_plot.js_on_event(SelectionGeometry, xy_select_callback)
 
-xz_select_callback =  CustomJS(args=dict(s1=s1,xy_names=['xs','zs']), code=select_code)
+xz_select_callback =  CustomJS(
+                        args=dict(s1=s1, xy_names=['xs','zs']),
+                        code=select_code)
 xz_plot.js_on_event(SelectionGeometry, xz_select_callback)
-```
+{% endhighlight %}
 
 These last two callbacks
 -  Reset the plot to it's original state
 -  Change the color of the selected plots when you press the button below the plots
 
-```python
+{% highlight python %}
 reset_callback = CustomJS(args=dict(s1=s1), 
 code=f"""
 // reset callback restores original colors and 
@@ -209,7 +214,6 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
 
     if (selection.length == 0) {
         alert("No line selected")
-    
     }
     for (var j = 0; j < selection.length; j+= 1) {
         s1.data['colors'][selection[j]] = 'cyan'
@@ -217,7 +221,8 @@ b.js_on_click(CustomJS(args=dict(s1=s1), code="""
     s1.selected['indices'] = []
     s1.change.emit()
 """))
-```
+{% endhighlight %}
+
 The last trick was to get the plot on my blog so I could show it off.
 Bokeh's autoload_static method creates two outputs: the body of a script to 
 display your plot, and a `<script>` tag that loads the script. In order
@@ -225,8 +230,7 @@ for the script to load properly, you have to give autoload_static the
 location where you are going to store your script so that the html tag
 part knows what to put for `src=`.
 
-
-```python
+{% highlight python %}
 bothviews = gridplot([[xy_plot, xz_plot]], sizing_mode='scale_both')
 plot_with_button = column(bothviews, b)
 
@@ -237,17 +241,21 @@ with open ("two_plots.html",'w') as fp:
 
 with open("two_plots.js",'w') as fp:
     fp.write(script_body)
-```
+{% endhighlight %}
 
-When I incorporated the script tag into the blog (jinja code), I wrapped the html part
-in a div to set the size. This blog is in jekyll, so I put the html tag in the _includes/
+When I incorporated the script tag into the blog, I wrapped the html part
+in a div to set the size (and included a resize corner in case you need it - the plot is 
+a bit wider than the default display width of the blog). This 
+blog is in jekyll, so I put the html tag in the _includes/
 directory (where jekyll looks when I use the include directive) and the code body in 
 scripts/ where I told bokeh it would be when I created the html.
 
-```markdown
+(Since the include is only one line, I could've just pasted it into the post as well.)
+
+{% highlight markdown %}
 <div style="width: 100%; height: 450px; resize:both; overflow:auto">
 {% raw %}
 {% include 2020_11_23/two_plots.html  %}
 {% endraw %}
 </div>
-```
+{% endhighlight %}

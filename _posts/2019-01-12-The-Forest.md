@@ -1,10 +1,9 @@
 ---
 layout: post
 title: Look at the forest!
-category: metis-project
 ---
 
-![trees]({{ site.url }}/images/trees.jpg)
+![trees]({{ site.url }}/assets/images/trees.jpg)
 
 ## Summary
 
@@ -76,7 +75,7 @@ The observations are supposed to be evenly spaced every four hours. Here is
 a KDE plot of the uncleaned 2.3 million rows:
 
 
-![needs_cleaning]({{ site.url }}/images/dirty_time_delta.svg)
+![needs_cleaning]({{ site.url }}/assets/images/dirty_time_delta.svg)
 
 You can read this as - a cluster of small outliers on the left, a whole 
 lotta nothing, then a chunk of data where it's "supposed to be" at
@@ -94,7 +93,7 @@ I cut off the bad data.
 Here is the zoom in on the observations that are three minutes apart or less.
 
 
-![little_spike]({{ site.url }}/images/little_spike.svg)
+![little_spike]({{ site.url }}/assets/images/little_spike.svg)
 
 I cut those off.  Note: I discovered as I was making a graph for this blog
 post that I didn't actually cut off enough, as there was another spike after 
@@ -124,19 +123,19 @@ Plut or minus two billion? I suppose, it makes sense that the data is clustered
 right in the middle of that range, but it's not a particularly helpful insight.. 
 
 
-![raw_entry]({{ site.url }}/images/raw_entry_data.svg)
+![raw_entry]({{ site.url }}/assets/images/raw_entry_data.svg)
 
 I decided to start with just looking for the outliers on the high end of
 the scale and hit upon the pandas quantile method. I started at the 
 the 99th percentile and kept adding nines.
 
-![qu_1]({{ site.url }}/images/qu_1.png)
+![qu_1]({{ site.url }}/assets/images/qu_1.png)
 
 Sure, 2700 people could probably go through a single subway turnstile
 in a four hour period. That's busy, but averages out to over 5 seconds
 per person to get through the doorway.
 
-![qu_2]({{ site.url }}/images/qu_2.png)
+![qu_2]({{ site.url }}/assets/images/qu_2.png)
 
 Nope! Definitely found the boundary between good and bad data here.
 
@@ -148,7 +147,7 @@ be counters running backwards.
 
 And then I graphed it.
 
-![final_kde]({{ site.url }}/images/final_kde.svg)
+![final_kde]({{ site.url }}/assets/images/final_kde.svg)
 
 
 It's the [Poisson distribution!](https://en.wikipedia.org/wiki/Poisson_distribution)
@@ -163,11 +162,9 @@ station? Poisson. Or subset further to just one day of the week? Poisson. The sm
 the data set size, the more jitters in the curve, but it was unmistakeably 
 Poisson. 
 
-![mondays]({{ site.url }}/images/mondays.svg)
-
+![mondays]({{ site.url }}/assets/images/mondays.svg)
 
 OK, proof that I'm a nerd, but that was my big accomplishment for the 
 first week of boot camp.
 
 I learned to get out from under the trees and look at the forest.
-
