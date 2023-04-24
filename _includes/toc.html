@@ -1,0 +1,10 @@
+{% if page.toc %}
+<p><strong>Table of Contents</strong></p>
+<ul>
+    {% for title in page.toc %}
+    <li>
+        <a href="#{{ title | slugify}}">{{title}}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
